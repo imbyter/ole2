@@ -80,7 +80,13 @@ func (o *Ole) readMSAT() error {
 		}
 	}
 
+	i := 0
 	for sid := o.header.Difstart; sid != ENDOFCHAIN; {
+
+		if i == 10000 {
+			break
+		}
+
 		if sector, err := o.sector_read(sid); err == nil {
 			sids := sector.MsatValues(o.Lsector)
 
@@ -88,6 +94,12 @@ func (o *Ole) readMSAT() error {
 				if sector, err := o.sector_read(sid); err == nil {
 					sids := sector.AllValues(o.Lsector)
 
+					if i == 10000 {
+						break
+					}
+
+					i++
+					
 					o.SecID = append(o.SecID, sids...)
 				} else {
 					return err
